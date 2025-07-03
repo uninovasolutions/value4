@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -13,29 +13,25 @@ import {
   Bot,
   User
 } from 'lucide-react';
-import { useSession } from '@/hooks/use-session';
+import { useSessionId } from '@/hooks/use-session-id';
+import { useChatHistory, ChatMessage } from '@/hooks/use-chat-history';
 import { useChatInterface } from '@/hooks/use-chat-interface';
 import { toast } from 'sonner';
-
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
-}
 
 interface ChatInterfaceProps {
   slug: string;
 }
 
 export function ChatInterface({ slug }: ChatInterfaceProps) {
-  const { sessionId } = useSession();
+  const { sessionId, isLoaded: sessionLoaded } = useSessionId();
+  const { messages, addMessage, isLoaded: historyLoaded } = useChatHistory(sessionId);
   const { isOpen, isMinimized, openChat, closeChat, toggleMinimize } = useChatInterface();
   
-  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [blockTimer, setBlockTimer] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -46,23 +42,44 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
     scrollToBottom();
   }, [messages]);
 
-  const sendMessage = async (messageText: string) => {
-    if (!messageText.trim() || isLoading) return;
+  // Handle rate limit blocking timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isBlocked && blockTimer > 0) {
+      interval = setInterval(() => {
+        setBlockTimer(prev => {
+          if (prev <= 1) {
+            setIsBlocked(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isBlocked, blockTimer]);
 
-    const userMessage: Message = {
+  const sendMessage = async (messageText: string) => {
+    if (!messageText.trim() || isLoading || isBlocked || !sessionLoaded) return;
+
+    const userMessage: ChatMessage = {
       id: Date.now().toString(),
       text: messageText,
       sender: 'user',
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    // Add user message to chat
+    addMessage(userMessage);
     setInputValue('');
     setIsLoading(true);
     setIsTyping(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      // Direct call to N8N webhook since we can't use API routes in static export
+      const webhookUrl = 'https://n8n.uninovasolutions.com/webhook/ai-chat';
+      
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -71,54 +88,40 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
           sid: sessionId,
           slug,
           message: messageText,
-          meta: {
-            timestamp: Date.now(),
-            userAgent: navigator.userAgent,
-            screenSize: {
-              width: window.screen.width,
-              height: window.screen.height,
-            },
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          },
         }),
       });
 
       if (response.status === 429) {
-        toast.error('Bitte warten Sie einen Moment, bevor Sie die nächste Nachricht senden.');
+        // Rate limited - block input for 30 seconds
+        setIsBlocked(true);
+        setBlockTimer(30);
+        toast.error('Bitte kurz warten …');
+        setIsTyping(false);
         return;
       }
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      
+
       // Simulate typing delay for better UX
       setTimeout(() => {
-        const botMessage: Message = {
+        const botMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
-          text: data.message || data.response || 'Entschuldigung, bei der Verarbeitung Ihrer Anfrage ist ein Fehler aufgetreten.',
+          text: data.text || data.message || 'Entschuldigung, bei der Verarbeitung Ihrer Anfrage ist ein Fehler aufgetreten.',
           sender: 'bot',
           timestamp: new Date(),
         };
 
-        setMessages(prev => [...prev, botMessage]);
+        addMessage(botMessage);
         setIsTyping(false);
-
-        // Handle checkout URL if provided
-        if (data.checkoutURL) {
-          setTimeout(() => {
-            if (confirm('Möchten Sie zum Checkout weitergehen?')) {
-              window.location.href = data.checkoutURL;
-            }
-          }, 2000);
-        }
       }, 1000 + Math.random() * 1000); // Random delay between 1-2 seconds
 
     } catch (error) {
       console.error('Chat error:', error);
-      toast.error('Netzwerkfehler. Bitte versuchen Sie es erneut.');
+      toast.error('Technischer Fehler');
       setIsTyping(false);
     } finally {
       setIsLoading(false);
@@ -129,6 +132,11 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
     e.preventDefault();
     sendMessage(inputValue);
   };
+
+  // Don't render until session is loaded
+  if (!sessionLoaded || !historyLoaded) {
+    return null;
+  }
 
   if (!isOpen) {
     return (
@@ -157,7 +165,12 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
             <div>
               <h3 className="text-white font-medium">KI-Assistent</h3>
               <p className="text-white/60 text-xs">
-                {isTyping ? 'Tippt...' : 'Verbunden'}
+                {isBlocked && blockTimer > 0 
+                  ? `Gesperrt für ${blockTimer}s`
+                  : isTyping 
+                    ? 'Tippt...' 
+                    : 'Verbunden'
+                }
               </p>
             </div>
           </div>
@@ -256,22 +269,28 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
 
             {/* Input */}
             <div className="p-4 border-t border-white/10">
-              <form onSubmit={handleSubmit} className="flex gap-2">
-                <Input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Schreiben Sie Ihre Nachricht..."
-                  disabled={isLoading}
-                  className="flex-1 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
-                />
-                <Button
-                  type="submit"
-                  disabled={isLoading || !inputValue.trim()}
-                  className="glass-button bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4"
-                >
-                  <Send className="w-4 h-4" />
-                </Button>
-              </form>
+              {isBlocked && blockTimer > 0 ? (
+                <div className="flex items-center justify-center p-4 text-white/60 text-sm">
+                  Bitte warten Sie noch {blockTimer} Sekunden...
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="flex gap-2">
+                  <Input
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Schreiben Sie Ihre Nachricht..."
+                    disabled={isLoading}
+                    className="flex-1 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={isLoading || !inputValue.trim()}
+                    className="glass-button bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </form>
+              )}
             </div>
           </>
         )}
