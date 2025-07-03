@@ -1,38 +1,42 @@
-'use client';
-
-import { useParams } from 'next/navigation';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { HeroSection } from '@/components/hero-section';
 import { Footer } from '@/components/footer';
 import { ChatInterface } from '@/components/chat-interface';
-import { SlugProvider, useSlugContext } from '@/components/slug-provider';
+import { getProspectData, ProspectData } from '@/lib/prospect-data';
 
-function SlugContent({ currentSlug }: { currentSlug: string }) {
-  const { firstSlug, prospectData, isLoaded } = useSlugContext();
+interface SlugPageProps {
+  params: { slug: string };
+}
 
-  if (!isLoaded) {
-    return (
-      <main className="min-h-screen flex flex-col">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="glass p-8 animate-pulse">
-            <div className="h-8 bg-white/20 rounded w-48 mb-4"></div>
-            <div className="h-4 bg-white/10 rounded w-32"></div>
-          </div>
-        </div>
-      </main>
-    );
+// SSR: Generate metadata server-side
+export async function generateMetadata({ params }: SlugPageProps): Promise<Metadata> {
+  const prospectData = await getProspectData(params.slug);
+  
+  if (!prospectData) {
+    return {
+      title: 'Business Not Found',
+      description: 'The requested business profile could not be found.',
+    };
   }
 
+  return {
+    title: `${prospectData.biz_name} - KI-Buchungsassistent`,
+    description: prospectData.biz_pitch || `Buchen Sie Termine bei ${prospectData.biz_name} mit unserem KI-gestützten Assistenten.`,
+    openGraph: {
+      title: `${prospectData.biz_name} - KI-Buchungsassistent`,
+      description: prospectData.biz_pitch || `Buchen Sie Termine bei ${prospectData.biz_name} mit unserem KI-gestützten Assistenten.`,
+      type: 'website',
+    },
+  };
+}
+
+// SSR: Server-side data fetching
+export default async function SlugPage({ params }: SlugPageProps) {
+  const prospectData = await getProspectData(params.slug);
+
   if (!prospectData) {
-    return (
-      <main className="min-h-screen flex flex-col">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="glass p-8">
-            <h1 className="text-2xl text-white mb-4">Unternehmen nicht gefunden</h1>
-            <p className="text-white/70">Das angeforderte Unternehmensprofil konnte nicht gefunden werden.</p>
-          </div>
-        </div>
-      </main>
-    );
+    notFound();
   }
 
   return (
@@ -45,23 +49,12 @@ function SlugContent({ currentSlug }: { currentSlug: string }) {
         h3Text="Er nennt Preise in Sekunden, reserviert Termine und sichert die Anzahlung – 24 / 7, ganz ohne Telefon."
         ctaPlaceholder="Frag ihn etwas …"
         showButtonCta={false}
-        slug={firstSlug}
+        slug={params.slug}
       />
       
       <Footer />
       
-      <ChatInterface slug={firstSlug} />
+      <ChatInterface slug={params.slug} />
     </main>
-  );
-}
-
-export default function SlugPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-
-  return (
-    <SlugProvider currentSlug={slug}>
-      <SlugContent currentSlug={slug} />
-    </SlugProvider>
   );
 }
