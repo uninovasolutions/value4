@@ -1,0 +1,5 @@
+# Handle client-side routing
+/*    /index.html   200
+
+# API routes (these won't work in static export, but keeping for reference)
+/api/*  /api/:splat  200

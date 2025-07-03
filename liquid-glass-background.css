@@ -1,0 +1,275 @@
+/* Liquid Glass Background - Reusable Design System */
+
+/* CSS Custom Properties */
+:root {
+  /* Glass Variables */
+  --glass-bg: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-shadow: 0 1px 4px 0 rgba(255, 255, 255, 0.08) inset, 
+                  0 2px 12px 0 rgba(0, 0, 0, 0.25);
+  --glass-backdrop: blur(12px);
+  
+  /* Gradient Variables */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-purple: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  --gradient-ocean: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Main Liquid Background */
+.liquid-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #0e1117 0%, #1c274f 100%);
+  animation: fadeGradient 20s ease-in-out infinite alternate;
+}
+
+/* Alternative background variations */
+.liquid-background-variant-1 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: 
+    radial-gradient(circle at 25% 75%, rgba(102, 126, 234, 0.4) 0%, transparent 60%),
+    radial-gradient(circle at 75% 25%, rgba(168, 85, 247, 0.3) 0%, transparent 60%),
+    radial-gradient(circle at 50% 90%, rgba(34, 197, 94, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%);
+  animation: fadeGradient 25s ease-in-out infinite alternate;
+}
+
+.liquid-background-variant-2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: 
+    radial-gradient(circle at 30% 60%, rgba(236, 72, 153, 0.3) 0%, transparent 55%),
+    radial-gradient(circle at 70% 40%, rgba(59, 130, 246, 0.3) 0%, transparent 55%),
+    radial-gradient(circle at 60% 80%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  animation: fadeGradient 18s ease-in-out infinite alternate;
+}
+
+/* Glass Components */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border-radius: 1.5rem;
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-button {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border-radius: 1rem;
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--glass-shadow), 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.glass-button:active {
+  transform: translateY(0) scale(1);
+}
+
+/* Glass card variants */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border-radius: 1.5rem;
+  box-shadow: var(--glass-shadow);
+  padding: 2rem;
+}
+
+.glass-minimal {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Floating orbs for extra ambiance */
+.floating-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.6;
+  animation: floatOrb 15s ease-in-out infinite;
+}
+
+.floating-orb-1 {
+  width: 300px;
+  height: 300px;
+  background: rgba(102, 126, 234, 0.3);
+  top: 10%;
+  left: 20%;
+  animation-delay: 0s;
+}
+
+.floating-orb-2 {
+  width: 200px;
+  height: 200px;
+  background: rgba(168, 85, 247, 0.3);
+  top: 60%;
+  right: 30%;
+  animation-delay: -5s;
+}
+
+.floating-orb-3 {
+  width: 250px;
+  height: 250px;
+  background: rgba(34, 197, 94, 0.2);
+  bottom: 20%;
+  left: 50%;
+  animation-delay: -10s;
+}
+
+/* Animations */
+@keyframes fadeGradient {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  33% {
+    opacity: 0.8;
+    transform: scale(1.05) rotate(1deg);
+  }
+  66% {
+    opacity: 0.9;
+    transform: scale(0.98) rotate(-0.5deg);
+  }
+}
+
+@keyframes floatOrb {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) scale(1);
+  }
+  33% {
+    transform: translateY(-30px) translateX(20px) scale(1.1);
+  }
+  66% {
+    transform: translateY(20px) translateX(-15px) scale(0.9);
+  }
+}
+
+/* Pulse animation for interactive elements */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Slide animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .glass-button:hover {
+    transform: none;
+  }
+  
+  .liquid-background,
+  .liquid-background-variant-1,
+  .liquid-background-variant-2 {
+    animation: none;
+  }
+  
+  .floating-orb {
+    animation: none;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .liquid-background,
+  .liquid-background-variant-1,
+  .liquid-background-variant-2,
+  .glass,
+  .glass-button,
+  .glass-card,
+  .glass-minimal {
+    background: white !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+  
+  .floating-orb {
+    display: none;
+  }
+}

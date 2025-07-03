@@ -1,0 +1,13 @@
+name = "liquid-glass-demo"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "liquid-glass-demo"
+
+[env.staging]
+name = "liquid-glass-demo-staging"
+
+# Environment variables (set these in Cloudflare dashboard)
+# NEXT_PUBLIC_N8N_CHAT_URL
+# NEXT_PUBLIC_N8N_PROSPECT_URL
+# NEXT_PUBLIC_SITE_URL
