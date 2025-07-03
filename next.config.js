@@ -21,10 +21,8 @@ const nextConfig = {
   httpAgentOptions: {
     keepAlive: true,
   },
-  // Cloudflare Pages configuration
+  // SSR configuration - removed static export
   trailingSlash: false,
-  output: 'export',
-  distDir: 'out',
 };
 
 module.exports = nextConfig;
