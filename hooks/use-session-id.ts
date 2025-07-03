@@ -1,7 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-
 export function useSessionId() {
   const [sessionId, setSessionId] = useState<string>('');
   const [isLoaded, setIsLoaded] = useState(false);
