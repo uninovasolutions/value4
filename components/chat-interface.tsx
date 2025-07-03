@@ -77,7 +77,7 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
 
     try {
       // Direct call to N8N webhook since we can't use API routes in static export
-      const webhookUrl = 'https://n8n.uninovasolutions.com/webhook-test/ai-chat';
+      const webhookUrl = 'https://n8n.uninovasolutions.com/webhook/ai-chat';
       
       const response = await fetch(webhookUrl, {
         method: 'POST',
