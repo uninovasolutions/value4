@@ -6,69 +6,9 @@ This guide explains how to deploy the Liquid Glass Demo application with **Serve
 
 This application **MUST** be deployed with SSR capabilities. Static export is **NOT SUPPORTED**.
 
-## Supported Platforms
 
-### Option 1: Vercel (Recommended)
+It will either be deployed to NETLIFY or CLOUDFLARE, so make sure THAT THE PROJECT SUPPORTS THAT.
 
-1. **Connect Repository**
-   - Go to [Vercel](https://vercel.com/)
-   - Import your GitHub repository
-   - Vercel automatically detects Next.js and configures SSR
-
-2. **Environment Variables**
-   Set these in the Vercel dashboard:
-   ```
-   NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
-   NEXT_PUBLIC_N8N_CHAT_URL=https://n8n.uninovasolutions.com/webhook/ai-chat
-   NEXT_PUBLIC_N8N_PROSPECT_URL=https://your-n8n-instance.com/webhook/get-prospect
-   ```
-
-3. **Deploy**
-   - Push to main branch
-   - Vercel automatically builds and deploys with SSR
-
-### Option 2: Railway
-
-1. **Connect Repository**
-   - Go to [Railway](https://railway.app/)
-   - Connect your GitHub repository
-   - Railway automatically detects Next.js
-
-2. **Environment Variables**
-   ```
-   NEXT_PUBLIC_SITE_URL=https://your-app.railway.app
-   NEXT_PUBLIC_N8N_CHAT_URL=https://n8n.uninovasolutions.com/webhook/ai-chat
-   NEXT_PUBLIC_N8N_PROSPECT_URL=https://your-n8n-instance.com/webhook/get-prospect
-   ```
-
-3. **Deploy**
-   - Railway automatically builds and deploys with SSR
-
-### Option 3: DigitalOcean App Platform
-
-1. **Create App**
-   - Connect your GitHub repository
-   - Select Node.js environment
-
-2. **Build Settings**
-   - Build command: `npm run build`
-   - Run command: `npm start`
-
-3. **Environment Variables**
-   ```
-   NEXT_PUBLIC_SITE_URL=https://your-app.ondigitalocean.app
-   NEXT_PUBLIC_N8N_CHAT_URL=https://n8n.uninovasolutions.com/webhook/ai-chat
-   NEXT_PUBLIC_N8N_PROSPECT_URL=https://your-n8n-instance.com/webhook/get-prospect
-   ```
-
-## UNSUPPORTED Platforms
-
-These platforms do **NOT** support SSR and **CANNOT** be used:
-
-- ❌ Netlify (static hosting only)
-- ❌ GitHub Pages (static only)
-- ❌ Cloudflare Pages (static only)
-- ❌ Surge.sh (static only)
 
 ## SSR Features
 
