@@ -1,35 +1,15 @@
-# Liquid Glass Background Design System
+# Demo Website for an Automated Chatbot and CRM System for Car Wrapping Shops in Germany with Apple Design and Liquid Glass Glassmorphism Panels for a Clean Futuristic Simple Look and Feel
 
-A beautiful, reusable background design system featuring animated gradients and glass morphism effects.
+## The Website should have these features:
 
-## Features
-
-- **Animated Gradient Backgrounds**: Smooth, organic animations that create a liquid-like effect
+- **Animated Gradient Backgrounds**: Smooth, organic animations
 - **Glass Morphism Components**: Beautiful frosted glass effects with backdrop blur
 - **Multiple Variants**: 3 different background styles to choose from
 - **Responsive**: Works perfectly on all screen sizes
 - **Accessible**: Respects user preferences for reduced motion
 - **Print-Friendly**: Automatically adapts for print media
 
-## Quick Start
-
-1. Include the CSS file in your project:
-```html
-<link rel="stylesheet" href="liquid-glass-background.css">
-```
-
-2. Add the background to your HTML:
-```html
-<div class="liquid-background"></div>
-```
-
-3. Use glass components:
-```html
-<div class="glass-card">
-    <h2>Your Content</h2>
-    <p>Beautiful glass morphism effect!</p>
-</div>
-```
+---
 
 ## Background Variants
 
@@ -175,5 +155,3 @@ export default function App() {
 - The backdrop-filter can be GPU intensive on some devices
 - Consider adding the `will-change` property for better performance on moving elements
 - The floating orbs are optional and can be removed for better performance
-
-Enjoy creating beautiful, modern interfaces with this liquid glass design system!
