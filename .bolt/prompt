@@ -7,3 +7,5 @@ Do not write code that will trigger this error: "Warning: Extra attributes from 
 By default, this template supports JSX syntax with Tailwind CSS classes, the shadcn/ui library, React hooks, and Lucide React for icons. Do not install other packages for UI themes, icons, etc unless absolutely necessary or I request them.
 
 Use icons from lucide-react for logos.
+
+THIS PROJECT IS SUPPOSED TO BE EXPORTED WITH SERVER SIDE RENDERING. IF FILES SAY ANYTHING ELSE, EITHER IGNORE OR FIX THAT BY CHANGING IT TO SSR
