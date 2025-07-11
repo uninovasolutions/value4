@@ -14,24 +14,22 @@ It will either be deployed to NETLIFY or CLOUDFLARE, so make sure THAT THE PROJE
 
 The application uses these SSR features:
 
-1. **Server-Side Data Fetching**: Prospect data is fetched on the server
-2. **Dynamic Metadata**: SEO metadata is generated server-side
-3. **API Routes**: Backend functionality for chat
-4. **Dynamic Routing**: Business-specific pages with SSR
+1. **Dynamic Metadata**: SEO metadata is generated server-side
+2. **API Routes**: Backend functionality for chat
+3. **Dynamic Pages**: Business-specific pages with SSR
 
 ## Environment Variables
 
 Required for SSR deployment:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://your-domain.com
+NEXT_PUBLIC_SITE_URL=https://uninovasolutions.com
 NEXT_PUBLIC_N8N_CHAT_URL=https://n8n.uninovasolutions.com/webhook/ai-chat
-NEXT_PUBLIC_N8N_PROSPECT_URL=https://your-n8n-instance.com/webhook/get-prospect
 ```
 
 ## Verification
 
-After deployment, verify SSR is working:
+After creation, verify SSR is working:
 
 1. **View Page Source**: Should show fully rendered HTML
 2. **Check Network Tab**: Initial page load should be server-rendered
@@ -47,10 +45,10 @@ SSR provides:
 - Dynamic content generation
 - Server-side data fetching
 
-## Troubleshooting
 
-### Build Failures
-- Ensure Node.js 18+ is used
+## Checklist:
+
+- Ensure THE LATEST AND NEWEST SECURE VERSION OF Node.js is used, TO AVOID LEGACY ISSUES
 - Check all dependencies are in package.json
 - Verify no static export configuration
 
@@ -63,12 +61,5 @@ SSR provides:
 - Monitor server response times
 - Check database connection if using external data
 - Optimize images and assets
-
-## Support
-
-For SSR deployment issues:
-- **Vercel**: Check [Vercel documentation](https://vercel.com/docs)
-- **Railway**: Check [Railway documentation](https://docs.railway.app/)
-- **DigitalOcean**: Check [App Platform documentation](https://docs.digitalocean.com/products/app-platform/)
 
 **Remember: This application requires SSR and cannot be deployed as a static site.**
