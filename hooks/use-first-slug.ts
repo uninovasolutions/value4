@@ -43,8 +43,8 @@ export function useFirstSlug(currentSlug?: string) {
         setFirstSlugCookie(pathSlug);
       } else {
         // No slug detected, use 'home' as default
-        setFirstSlug('generic');
-        setFirstSlugCookie('generic');
+        setFirstSlug('home');
+        setFirstSlugCookie('home');
       }
     }
     
