@@ -69,7 +69,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#1c274f" />
       </head>
       <body className={kumbhSans.className} suppressHydrationWarning>
-        <div className="liquid-background" />
+        <div className="liquid-background-variant-1" />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
