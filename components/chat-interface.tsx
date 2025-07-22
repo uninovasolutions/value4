@@ -285,51 +285,49 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
                 )}
 
                 {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                    data-testid={message.sender === 'bot' ? 'bot-message' : 'user-message'}
-                  >
-                    <div className={`flex items-start gap-2 max-w-[80%] ${
-                      message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'
-                    }`}>
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        message.sender === 'user' 
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-600' 
-                          : 'bg-white/10'
+                  <div key={message.id} data-testid={message.sender === 'bot' ? 'bot-message' : 'user-message'}>
+                    <div className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`flex items-start gap-2 max-w-[80%] ${
+                        message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'
                       }`}>
-                        {message.sender === 'user' ? (
-                          <User className="w-3 h-3 text-white" />
-                        ) : (
-                          <Bot className="w-3 h-3 text-white" />
-                        )}
-                      </div>
-                      
-                      <div className={`p-3 rounded-2xl ${
-                        message.sender === 'user'
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                          : 'bg-white/10 text-white'
-                      }`}>
-                        <p className="text-sm">
-                          {message.text.replace('[[openCalendar]]', '').trim() || message.text}
-                        </p>
-                        <p className={`text-xs mt-1 ${
-                          message.sender === 'user' ? 'text-white/70' : 'text-white/50'
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          message.sender === 'user' 
+                            ? 'bg-gradient-to-r from-blue-500 to-purple-600' 
+                            : 'bg-white/10'
                         }`}>
-                          {message.timestamp.toLocaleTimeString('de-DE', { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                          })}
-                        </p>
-                      </div>
-                      
-                      {/* Show calendar widget if message contains [[openCalendar]] */}
-                      {message.sender === 'bot' && message.text.includes('[[openCalendar]]') && (
-                        <div className="w-full mt-2">
-                          <CalendarWidget />
+                          {message.sender === 'user' ? (
+                            <User className="w-3 h-3 text-white" />
+                          ) : (
+                            <Bot className="w-3 h-3 text-white" />
+                          )}
                         </div>
-                      )}
+                        
+                        <div className={`p-3 rounded-2xl ${
+                          message.sender === 'user'
+                            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                            : 'bg-white/10 text-white'
+                        }`}>
+                          <p className="text-sm">
+                            {message.text.replace('[[openCalendar]]', '').trim() || message.text}
+                          </p>
+                          <p className={`text-xs mt-1 ${
+                            message.sender === 'user' ? 'text-white/70' : 'text-white/50'
+                          }`}>
+                            {message.timestamp.toLocaleTimeString('de-DE', { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </p>
+                        </div>
+                      </div>
                     </div>
+                    
+                    {/* Show calendar widget if message contains [[openCalendar]] - full width below message */}
+                    {message.sender === 'bot' && message.text.includes('[[openCalendar]]') && (
+                      <div className="w-full mt-4">
+                        <CalendarWidget />
+                      </div>
+                    )}
                   </div>
                 ))}
 
