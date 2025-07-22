@@ -25,32 +25,135 @@ interface ChatInterfaceProps {
 
 // Calendar widget component
 function CalendarWidget() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    // Load Cal.com script if not already loaded
-    if (!window.Cal) {
-      const script = document.createElement('script');
-      script.src = 'https://cal.uninovasolutions.com/embed/embed.js';
-      script.async = true;
-      document.head.appendChild(script);
-      
-      script.onload = () => {
-        window.Cal("init", "15min", {origin:"https://cal.uninovasolutions.com"});
+    const loadCalendar = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Check if Cal is already available
+        if (window.Cal) {
+          initializeCalendar();
+          return;
+        }
+
+        // Load Cal.com script
+        const script = document.createElement('script');
+        script.src = 'https://cal.uninovasolutions.com/embed/embed.js';
+        script.async = true;
+        
+        script.onload = () => {
+          // Wait a bit for the script to fully initialize
+          setTimeout(() => {
+            initializeCalendar();
+          }, 100);
+        };
+        
+        script.onerror = () => {
+          setError('Failed to load calendar script');
+          setIsLoading(false);
+        };
+        
+        document.head.appendChild(script);
+        
+      } catch (err) {
+        console.error('Calendar loading error:', err);
+        setError('Failed to load calendar');
+        setIsLoading(false);
+      }
+    };
+
+    const initializeCalendar = () => {
+      try {
+        if (!window.Cal) {
+          throw new Error('Cal.com script not loaded');
+        }
+
+        // Initialize Cal.com
+        window.Cal("init", "15min", {
+          origin: "https://cal.uninovasolutions.com"
+        });
+
+        // Setup inline calendar
         window.Cal.ns["15min"]("inline", {
-          elementOrSelector:"#my-cal-inline",
-          config: {"layout":"month_view"},
+          elementOrSelector: "#my-cal-inline",
+          config: { "layout": "month_view" },
           calLink: "uninova/15min",
         });
-        window.Cal.ns["15min"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
-      };
-    } else {
-      // Cal is already loaded, just initialize
-      window.Cal("init", "15min", {origin:"https://cal.uninovasolutions.com"});
-      window.Cal.ns["15min"]("inline", {
-        elementOrSelector:"#my-cal-inline",
-        config: {"layout":"month_view"},
-        calLink: "uninova/15min",
-      });
-      window.Cal.ns["15min"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+
+        // Configure UI
+        window.Cal.ns["15min"]("ui", {
+          "hideEventTypeDetails": false,
+          "layout": "month_view"
+        });
+
+        setIsLoading(false);
+        
+      } catch (err) {
+        console.error('Calendar initialization error:', err);
+        setError('Failed to initialize calendar');
+        setIsLoading(false);
+      }
+    };
+
+    loadCalendar();
+  }, []);
+
+  if (error) {
+    return (
+      <div className="mt-4 p-4 glass rounded-lg">
+        <div className="flex items-center gap-2 mb-3">
+          <Calendar className="w-4 h-4 text-red-400" />
+          <span className="text-red-400 text-sm font-medium">Calendar Error</span>
+        </div>
+        <p className="text-white/60 text-sm">{error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-2 px-3 py-1 bg-white/10 rounded text-white/80 text-sm hover:bg-white/20"
+        >
+          Reload Page
+        </button>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="mt-4 p-4 glass rounded-lg">
+        <div className="flex items-center gap-2 mb-3">
+          <Calendar className="w-4 h-4 text-white/80" />
+          <span className="text-white/80 text-sm font-medium">Terminbuchung</span>
+        </div>
+        <div className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/60"></div>
+          <span className="ml-3 text-white/60">Loading calendar...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-4 p-4 glass rounded-lg">
+      <div className="flex items-center gap-2 mb-3">
+        <Calendar className="w-4 h-4 text-white/80" />
+        <span className="text-white/80 text-sm font-medium">Terminbuchung</span>
+      </div>
+      <div 
+        style={{
+          width: '100%', 
+          height: '500px', 
+          overflow: 'scroll',
+          minHeight: '400px'
+        }} 
+        id="my-cal-inline"
+        className="rounded-lg bg-white/5 border border-white/10"
+      />
+    </div>
+  );
+}
     }
   }, []);
 
