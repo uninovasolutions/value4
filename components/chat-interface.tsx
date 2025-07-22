@@ -11,7 +11,8 @@ import {
   Minimize2, 
   Maximize2,
   Bot,
-  User
+  User,
+  Calendar
 } from 'lucide-react';
 import { useSessionId } from '@/hooks/use-session-id';
 import { useChatHistory, ChatMessage } from '@/hooks/use-chat-history';
@@ -20,6 +21,52 @@ import { toast } from 'sonner';
 
 interface ChatInterfaceProps {
   slug: string;
+}
+
+// Calendar widget component
+function CalendarWidget() {
+  useEffect(() => {
+    // Load Cal.com script if not already loaded
+    if (!window.Cal) {
+      const script = document.createElement('script');
+      script.src = 'https://cal.uninovasolutions.com/embed/embed.js';
+      script.async = true;
+      document.head.appendChild(script);
+      
+      script.onload = () => {
+        window.Cal("init", "15min", {origin:"https://cal.uninovasolutions.com"});
+        window.Cal.ns["15min"]("inline", {
+          elementOrSelector:"#my-cal-inline",
+          config: {"layout":"month_view"},
+          calLink: "uninova/15min",
+        });
+        window.Cal.ns["15min"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+      };
+    } else {
+      // Cal is already loaded, just initialize
+      window.Cal("init", "15min", {origin:"https://cal.uninovasolutions.com"});
+      window.Cal.ns["15min"]("inline", {
+        elementOrSelector:"#my-cal-inline",
+        config: {"layout":"month_view"},
+        calLink: "uninova/15min",
+      });
+      window.Cal.ns["15min"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+    }
+  }, []);
+
+  return (
+    <div className="mt-4 p-4 glass rounded-lg">
+      <div className="flex items-center gap-2 mb-3">
+        <Calendar className="w-4 h-4 text-white/80" />
+        <span className="text-white/80 text-sm font-medium">Terminbuchung</span>
+      </div>
+      <div 
+        style={{width:'100%', height:'500px', overflow:'scroll'}} 
+        id="my-cal-inline"
+        className="rounded-lg bg-white/5"
+      />
+    </div>
+  );
 }
 
 export function ChatInterface({ slug }: ChatInterfaceProps) {
@@ -116,9 +163,11 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
 
       // Simulate typing delay for better UX
       setTimeout(() => {
+        const responseText = data.text || data.message || 'Entschuldigung, bei der Verarbeitung Ihrer Anfrage ist ein Fehler aufgetreten.';
+        
         const botMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
-          text: data.text || data.message || 'Entschuldigung, bei der Verarbeitung Ihrer Anfrage ist ein Fehler aufgetreten.',
+          text: responseText,
           sender: 'bot',
           timestamp: new Date(),
         };
@@ -241,7 +290,9 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
                           ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
                           : 'bg-white/10 text-white'
                       }`}>
-                        <p className="text-sm">{message.text}</p>
+                        <p className="text-sm">
+                          {message.text.replace('[[openCalendar]]', '').trim() || message.text}
+                        </p>
                         <p className={`text-xs mt-1 ${
                           message.sender === 'user' ? 'text-white/70' : 'text-white/50'
                         }`}>
@@ -251,6 +302,13 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
                           })}
                         </p>
                       </div>
+                      
+                      {/* Show calendar widget if message contains [[openCalendar]] */}
+                      {message.sender === 'bot' && message.text.includes('[[openCalendar]]') && (
+                        <div className="w-full mt-2">
+                          <CalendarWidget />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
