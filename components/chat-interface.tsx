@@ -109,6 +109,9 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
   const sendMessage = async (messageText: string) => {
     if (!messageText.trim() || isLoading || isBlocked || !sessionLoaded) return;
 
+    // Check if user typed [[openCalendar]] for testing
+    const shouldShowCalendar = messageText.includes('[[openCalendar]]');
+
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       text: messageText,
@@ -121,6 +124,23 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
     setInputValue('');
     setIsLoading(true);
     setIsTyping(true);
+
+    // If user typed [[openCalendar]], simulate bot response with calendar
+    if (shouldShowCalendar) {
+      setTimeout(() => {
+        const botMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          text: 'Here is the calendar to book your appointment: [[openCalendar]]',
+          sender: 'bot',
+          timestamp: new Date(),
+        };
+
+        addMessage(botMessage);
+        setIsTyping(false);
+        setIsLoading(false);
+      }, 1000);
+      return;
+    }
 
     try {
       // Direct call to N8N webhook since we can't use API routes in static export
