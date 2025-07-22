@@ -154,23 +154,6 @@ function CalendarWidget() {
     </div>
   );
 }
-    }
-  }, []);
-
-  return (
-    <div className="mt-4 p-4 glass rounded-lg">
-      <div className="flex items-center gap-2 mb-3">
-        <Calendar className="w-4 h-4 text-white/80" />
-        <span className="text-white/80 text-sm font-medium">Terminbuchung</span>
-      </div>
-      <div 
-        style={{width:'100%', height:'500px', overflow:'scroll'}} 
-        id="my-cal-inline"
-        className="rounded-lg bg-white/5"
-      />
-    </div>
-  );
-}
 
 export function ChatInterface({ slug }: ChatInterfaceProps) {
   const { sessionId, isLoaded: sessionLoaded } = useSessionId();
