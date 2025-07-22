@@ -79,6 +79,13 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
       // Direct call to N8N webhook since we can't use API routes in static export
       const webhookUrl = 'https://n8n.uninovasolutions.com/webhook-test/ai-chat';
       
+      // Prepare chat history for the webhook
+      const chat_history = messages.map(msg => ({
+        text: msg.text,
+        sender: msg.sender === 'bot' ? 'Agent' : 'user',
+        timestamp: msg.timestamp.toISOString()
+      }));
+      
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -88,6 +95,7 @@ export function ChatInterface({ slug }: ChatInterfaceProps) {
           sid: sessionId,
           slug,
           message: messageText,
+          chat_history: chat_history,
         }),
       });
 
