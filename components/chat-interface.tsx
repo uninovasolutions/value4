@@ -46,10 +46,23 @@ function CalendarWidget() {
         script.async = true;
         
         script.onload = () => {
-          // Wait a bit for the script to fully initialize
-          setTimeout(() => {
-            initializeCalendar();
-          }, 100);
+          // Poll for Cal.com to be available with timeout
+          let pollAttempts = 0;
+          const maxPollAttempts = 50; // 5 seconds max
+          
+          const pollForCal = () => {
+            if (window.Cal) {
+              initializeCalendar();
+            } else if (pollAttempts < maxPollAttempts) {
+              pollAttempts++;
+              setTimeout(pollForCal, 100);
+            } else {
+              setError('Cal.com script loaded but not initialized properly');
+              setIsLoading(false);
+            }
+          };
+          
+          pollForCal();
         };
         
         script.onerror = () => {
